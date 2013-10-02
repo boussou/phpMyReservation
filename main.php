@@ -55,9 +55,13 @@ if(strstr(global_ua, 'iPhone') || strstr(global_ua, 'iPod') || strstr(global_ua,
 {
 	if(strstr(global_ua, 'AppleWebKit'))
 	{
-		if(strstr(global_ua, 'OS 5_') || strstr(global_ua, 'Android 2.3') || strstr(global_ua, 'Android 3') || strstr(global_ua, 'Android 4'))
+		if(strstr(global_ua, 'OS 5_') || strstr(global_ua, 'OS 6_') || strstr(global_ua, 'Android 2.3') || strstr(global_ua, 'Android 3') || strstr(global_ua, 'Android 4'))
 		{
 			define('global_css_animations', '1');
+		}
+		else
+		{
+			define('global_css_animations', '0');
 		}
 	}
 }
