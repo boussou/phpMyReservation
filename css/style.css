@@ -1,0 +1,548 @@
+/* Body */
+
+body
+{
+	margin: 50px 0 50px 0;
+	padding: 0;
+	background-color: #f5f5f5;
+	font-family: "trebuchet ms", arial, "liberation sans";
+	font-size: 14px;
+}
+
+/* Divisions */
+
+div#notification_div
+{
+	display: none;
+	position: fixed;
+	top: 0;
+	z-index: 200;
+	width: 100%;
+	font-size: 12px;
+	overflow: hidden;
+	white-space: nowrap;
+	pointer-events: none;
+}
+
+div#notification_inner_div
+{
+	display: table;
+	margin: 0 auto;
+	height: 100%;
+	background-color: #ffffaa;
+	border-bottom-left-radius: 10px;
+	border-bottom-right-radius: 10px;
+}
+
+div#notification_inner_cell_div
+{
+	display: table-cell;
+	min-width: 400px;
+	height: 30px;
+	padding-left: 20px;
+	padding-right: 20px;
+	vertical-align: middle;
+	text-align: center;
+}
+
+div#header_div
+{
+	position: fixed;
+	top: 0;
+	z-index: 100;
+	width: 100%;
+	height: 30px;
+	background-color: #2d2d2d;
+	box-shadow: 0px 2px 10px #2d2d2d;
+	-webkit-box-shadow: 0px 2px 10px #2d2d2d;
+	color: #fff;
+	font-size: 12px;
+	overflow: hidden;
+	white-space: nowrap;
+}
+
+div#header_inner_div
+{
+	display: table;
+	width: 100%;
+	height: 100%;
+}
+
+div#header_inner_left_div
+{
+	display: table-cell;
+	width: 250px;
+	padding-left: 10px;
+	vertical-align: middle;
+	text-align: left;
+}
+
+div#header_inner_center_div
+{
+	display: table-cell;
+	vertical-align: middle;
+	text-align: center;
+}
+
+div#header_inner_right_div
+{
+	display: table-cell;
+	width: 250px;
+	padding-right: 10px;
+	vertical-align: middle;
+	text-align: right;
+}
+
+div#content_div
+{
+	opacity: 0;
+	margin-top: 20px;
+	width: 100%;
+}
+
+div#preload_div
+{
+	display: none;
+}
+
+div.box_div
+{
+	margin: 0 auto;
+	background-color: #4a8cf6;
+	border: 1px solid #4a8cf6;
+	border-radius: 10px;
+	box-shadow: 2px 2px 10px #2d2d2d;
+	-webkit-box-shadow: 2px 2px 10px #2d2d2d;
+}
+
+div.box_top_div
+{
+	padding: 8px 15px;
+	color: #fff;
+	font-weight: bold;
+}
+
+div.box_body_div
+{
+	background-color: #fff;
+	padding: 25px;
+	color: #000;
+	border-bottom-left-radius: 9px;
+	border-bottom-right-radius: 9px;
+}
+
+div#about_div
+{
+	width: 600px;
+}
+
+div#login_div
+{
+	width: 600px;
+}
+
+div#new_user_div
+{
+	display: table;
+	width: 100%;
+}
+
+div#new_user_div div:first-child
+{
+	display: table-cell;
+	padding-right: 30px;
+}
+
+div#new_user_div div:last-child
+{
+	display: table-cell;
+}
+
+div#user_secret_code_div
+{
+	opacity: 0;
+	padding: 5px;
+	background-color: #ffffaa;
+	font-size: 12px;
+}
+
+div#reservation_div
+{
+	width: 1000px;
+}
+
+div#reservation_top_div
+{
+	display: table;
+	width: 100%;
+	margin: 0 auto;
+	padding: 8px 0;
+}
+
+div#reservation_top_left_div
+{
+	display: table-cell;
+	width: 150px;
+	padding-left: 15px;
+	text-align: left;
+}
+
+div#reservation_top_center_div
+{
+	display: table-cell;
+	text-align: center;
+}
+
+div#reservation_top_right_div
+{
+	display: table-cell;
+	width: 150px;
+	padding-right: 15px;
+	text-align: right;
+}
+
+div#reservation_table_div
+{
+	display: none;
+	opacity: 0;
+}
+
+div.reservation_time_div
+{
+	display: table;
+	width: 100%;
+	border: 1px solid #4a8cf6;
+	-webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+
+div.reservation_time_cell_div
+{
+	display: table-cell;
+	width: 100%;
+	height: 40px;
+	vertical-align: middle;
+	text-align: center;
+	font-family: arial, "liberation sans";
+	font-size: 12px;
+}
+
+div#reservation_details_div
+{
+	display: none;
+	position: absolute;
+	z-index: 200;
+	padding: 5px;
+	background-color: #ffffaa;
+	font-size: 12px;
+	box-shadow: 2px 2px 10px #2d2d2d;
+	-webkit-box-shadow: 2px 2px 10px #2d2d2d;
+}
+
+div#help_div
+{
+	width: 800px;
+}
+
+div#cp_div
+{
+	width: 800px;
+}
+
+div#user_details_div
+{
+	display: table;
+}
+
+div#user_details_div div
+{
+	display: table-cell;
+	padding-right: 20px;
+	vertical-align: top;
+	text-align: left;
+}
+
+/* Spans */
+
+span.error_span
+{
+	color: #d74937;
+}
+
+span#today_span
+{
+	color: #4a8cf6;
+	font-weight: bold;
+}
+
+/* Tables */
+
+table th
+{
+	text-align: left;
+	font-weight: bold;
+}
+
+table#forgot_password_table th, table#forgot_password_table td
+{
+	padding: 5px 50px 5px 5px;
+}
+
+table#reservation_table
+{
+	width: 100%;
+	border-spacing: 0;
+}
+
+table#reservation_table th, table#reservation_table td
+{
+	padding: 5px 10px;
+	vertical-align: middle;
+	text-align: left;
+}
+
+table#reservation_table colgroup#reservation_time_colgroup
+{
+	width: 9%;
+}
+
+table#reservation_table colgroup#reservation_day_colgroup
+{
+	width: 13%;
+}
+
+table#reservation_table td#reservation_corner_td
+{
+	border-bottom: 1px solid #ccc;
+	border-right: 1px solid #ccc;
+	text-align: center;
+}
+
+table#reservation_table th.reservation_time_th
+{
+	border-right: 1px solid #ccc;
+	font-weight: normal;
+	text-align: center;
+}
+
+table#reservation_table th.reservation_day_th
+{
+	border-bottom: 1px solid #ccc;
+	font-weight: normal;
+}
+
+table#users_table
+{
+	width: 100%;
+}
+
+table#users_table th, table#users_table td
+{
+	padding: 5px;
+}
+
+table#usage_table th, table#usage_table td
+{
+	padding: 5px 50px 5px 5px;
+}
+
+/* Inputs and buttons */
+
+input
+{
+	font-family: arial, "liberation sans";
+	font-size: 12px;
+}
+
+input[type=text], input[type=password]
+{
+	width: 200px;
+	padding: 4px;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	-webkit-appearance: none;
+}
+
+input[type=button], input[type=submit]
+{
+	padding: 8px;
+	background-color: #d74937;
+	color: #fff;
+	border: 0;
+	border-radius: 5px;
+	box-shadow: 0px 1px 2px #2d2d2d;
+	-webkit-box-shadow: 0px 1px 2px #2d2d2d;
+	-webkit-appearance: none;
+	-webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+
+input.small_button
+{
+	padding: 4px;
+}
+
+input.blue_button
+{
+	background-color: #4a8cf6;
+}
+
+input#price_input
+{
+	width: 20px;
+	text-align: center;
+}
+
+input#reservation_today_button
+{
+	visibility: hidden;	
+}
+
+/* Headlines */
+
+h1
+{
+	margin: 5px 0;
+	color: #2d2d2d;
+	text-align: center;
+	font-size: 24px;
+	font-weight: bold;
+}
+
+h2
+{
+	margin: 5px 0;
+	color: #2d2d2d;
+	font-size: 14px;
+	font-weight: bold;
+	text-align: center;
+}
+
+h3
+{
+	color: #4a8cf6;
+	font-size: 14px;
+	font-weight: bold;
+}
+
+/* Paragraphs */
+
+p.center_p
+{
+	text-align: center;
+}
+
+p.smalltext_p
+{
+	font-size: 12px;
+}
+
+p.bold_p
+{
+	font-weight: bold;
+}
+
+p.blue_p
+{
+	color: #4a8cf6;
+}
+
+p#login_message_p
+{
+	display: none;
+}
+
+p#new_user_message_p
+{
+	display: none;
+}
+
+p#user_administration_message_p
+{
+	display: none;
+}
+
+p#database_administration_message_p
+{
+	display: none;
+}
+
+p#system_configuration_message_p
+{
+	display: none;
+}
+
+p#usage_message_p
+{
+	display: none;
+}
+
+p#settings_message_p
+{
+	display: none;
+}
+
+/* Lists */
+
+ul
+{
+	padding: 0 0 0 30px;
+}
+
+li
+{
+	padding-bottom: 10px;
+}
+
+/* Links */
+
+a
+{
+	color: #4a8cf6;
+}
+
+div.box_top_div a
+{
+	color: #fff;
+}
+
+div#header_div a
+{
+	color: #fff;
+}
+
+div#reservation_top_div a
+{
+	color: #fff;
+	text-decoration: none;
+}
+
+/* Vertical lines */
+
+hr
+{
+	width: 100%;
+	height: 1px;
+	margin: 30px 0;
+	background-color: #ccc;
+	border: 0;
+}
+
+hr.blue_hr
+{
+	background-color: #4a8cf6;
+}
+
+hr.thick_hr
+{
+	height: 2px;
+}
+
+/* Animations */
+
+.div_fadein
+{
+	opacity: 1 !important;
+	-webkit-transition: opacity 0.25s ease-in;
+	-moz-transition: opacity 0.25s ease-in;
+	-o-transition: opacity 0.25s ease-in;
+	-ms-transition: opacity 0.25s ease-in;
+}
