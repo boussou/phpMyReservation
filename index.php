@@ -27,10 +27,14 @@
 
 <div id="notification_div"><div id="notification_inner_div"><div id="notification_inner_cell_div"></div></div></div>
 
-<div id="header_div"><?php include('header.php'); ?></div>
+<span id=debug></span>
+<?php include('header.php'); ?>
+
 
 <h1><?php echo global_title; ?></h1>
 <h2><?php echo global_organization; ?></h2>
+
+
 
 <div id="content_div"></div>
 

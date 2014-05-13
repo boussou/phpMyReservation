@@ -3,6 +3,22 @@ phpMyReservation
 
 Fork of [OleJon's](http://www.olejon.net) wonderful timeslot booking system for PHP and MySQL hosts.
 
+[Nadir]
+Fork of the fork (of https://github.com/ifmw/phpMyReservation)
+There is also a repo here : https://code.google.com/p/phpmyreservation/ 
+I don't know which one is the original.
+Quick & ultra dirty hack.
+
+####New Features [Nadir]
+    Moved to PDO
+    Moved to Sqlite (so that is is portable. Still there are file rights to set) - see reservation.db3
+    Made it work on Iphone (corrected several JS errors)
+    Added a few parameters (start date, weeks before/after...)
+    Changed the way interval are displayed & processed (here is every 30min)
+    Removed top links (control panel)
+    French translation as a side effect / French dates
+    (Removed code useless to me)
+    since it is PDO you can easily move it back to Mysql (see DB.php)
 
 ####Features
     Fast, easy & smooth

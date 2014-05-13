@@ -2,6 +2,8 @@
 
 include_once('main.php');
 
+    
+    
 if(check_login() != true) { exit; }
 
 if($_SESSION['user_is_admin'] == '1' && isset($_GET['list_users']))
@@ -10,17 +12,17 @@ if($_SESSION['user_is_admin'] == '1' && isset($_GET['list_users']))
 }
 elseif($_SESSION['user_is_admin'] == '1' && isset($_GET['reset_user_password']))
 {
-	$user_id = mysql_real_escape_string($_POST['user_id']);
+	$user_id = filter_string($_POST['user_id']);
 	echo reset_user_password($user_id);
 }
 elseif($_SESSION['user_is_admin'] == '1' && isset($_GET['change_user_permissions']))
 {
-	$user_id = mysql_real_escape_string($_POST['user_id']);
+	$user_id = filter_string($_POST['user_id']);
 	echo change_user_permissions($user_id);
 }
 elseif($_SESSION['user_is_admin'] == '1' && isset($_GET['delete_user_data']))
 {
-	$user_id = mysql_real_escape_string($_POST['user_id']);
+	$user_id = filter_string($_POST['user_id']);
 	$data = $_POST['delete_data'];
 	echo delete_user_data($user_id, $data);
 }
@@ -31,7 +33,7 @@ elseif($_SESSION['user_is_admin'] == '1' && isset($_GET['delete_all']))
 }
 elseif($_SESSION['user_is_admin'] == '1' && isset($_GET['save_system_configuration']))
 {
-	$price = mysql_real_escape_string($_POST['price']);
+	$price = filter_string($_POST['price']);
 	echo save_system_configuration($price);
 }
 elseif(isset($_GET['get_usage']))
@@ -48,9 +50,9 @@ elseif(isset($_GET['toggle_reservation_reminder']))
 }
 elseif(isset($_GET['change_user_details']))
 {
-	$user_name = mysql_real_escape_string(trim($_POST['user_name']));
-	$user_email = mysql_real_escape_string($_POST['user_email']);
-	$user_password = mysql_real_escape_string($_POST['user_password']);
+	$user_name = filter_string(trim($_POST['user_name']));
+	$user_email = filter_string($_POST['user_email']);
+	$user_password = filter_string($_POST['user_password']);
 	echo change_user_details($user_name, $user_email, $user_password);
 }
 else
@@ -80,20 +82,7 @@ else
 		<p id="database_administration_message_p"></p>
 
 		<hr>
-
-		<h3>System configuration</h3>
-
-		<p class="smalltext_p">Changing the price will not affect previous reservations.</p>
-
-		<form action="." id="system_configuration_form"><p>
-
-		<input type="text" id="price_input" value="<?php echo get_configuration('price'); ?>"> <label for="price_input">Price per reservation, in <?php echo global_currency; ?></label><br><br>
-
-		<input type="submit" class="blue_button small_button" value="Save configuration">
-
-		</p></form>
-
-		<p id="system_configuration_message_p"></p>
+        
 
 		<hr class="blue_hr thick_hr">
 
@@ -109,8 +98,7 @@ else
 
 	<div id="usage_div"><?php echo get_usage(); ?></div>
 
-	<p><input type="button" class="blue_button small_button" id="add_one_reservation_button" value="Add 1 to my reservations"></p>
-
+ 
 	<p id="usage_message_p"></p>
 
 	<hr>

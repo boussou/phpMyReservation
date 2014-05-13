@@ -4,8 +4,11 @@
 
 function get_configuration($data)
 {
-	$query = mysql_query("SELECT * FROM " . global_mysql_configuration_table)or die('<span class="error_span"><u>MySQL error:</u> ' . htmlspecialchars(mysql_error()) . '</span>');
-	$configuration = mysql_fetch_array($query);
+
+    
+    $sql = ("SELECT * FROM " . global_mysql_configuration_table);
+    $configuration = DB::query_single_row($sql);
+   
 	return($configuration[$data]);
 }
 
@@ -82,9 +85,11 @@ function validate_price($price)
 
 function user_name_exists($user_name)
 {
-	$query = mysql_query("SELECT * FROM " . global_mysql_users_table . " WHERE user_name='$user_name'")or die('<span class="error_span"><u>MySQL error:</u> ' . htmlspecialchars(mysql_error()) . '</span>');
 
-	if(mysql_num_rows($query) > 0)
+    $sql = ("SELECT * FROM " . global_mysql_users_table . " WHERE user_name='$user_name'") ;
+    $res = DB::query_all($sql);
+    
+	if(count($res) > 0)
 	{
 		return(true);
 	}
@@ -92,9 +97,11 @@ function user_name_exists($user_name)
 
 function user_email_exists($user_email)
 {
-	$query = mysql_query("SELECT * FROM " . global_mysql_users_table . " WHERE user_email='$user_email'")or die('<span class="error_span"><u>MySQL error:</u> ' . htmlspecialchars(mysql_error()) . '</span>');
 
-	if(mysql_num_rows($query) > 0)
+	$query = ("SELECT * FROM " . global_mysql_users_table . " WHERE user_email='$user_email'")    ;
+    $res = DB::query_all($query);
+                                
+    if(count($res) > 0)
 	{
 		return(true);
 	}
@@ -119,11 +126,12 @@ function login($user_email, $user_password, $user_remember)
 	$user_password_encrypted = encrypt_password($user_password);
 	$user_password = add_salt($user_password);
 	
-	$query = mysql_query("SELECT * FROM " . global_mysql_users_table . " WHERE user_email='$user_email' AND user_password='$user_password_encrypted' OR user_email='$user_email' AND user_password='$user_password'")or die('<span class="error_span"><u>MySQL error:</u> ' . htmlspecialchars(mysql_error()) . '</span>');
-
-	if(mysql_num_rows($query) == 1)
+	$query = ("SELECT * FROM " . global_mysql_users_table . " WHERE user_email='$user_email' AND user_password='$user_password_encrypted' OR user_email='$user_email' AND user_password='$user_password'");
+       $all = DB::query_all($query);
+ 
+    if(count($all) == 1)
 	{
-			$user = mysql_fetch_array($query);
+			$user = $all[0];
 
 			$_SESSION['user_id'] = $user['user_id'];
 			$_SESSION['user_is_admin'] = $user['user_is_admin'];
@@ -149,9 +157,13 @@ function check_login()
 	if(isset($_SESSION['logged_in']))
 	{
 		$user_id = $_SESSION['user_id'];
-		$query = mysql_query("SELECT * FROM " . global_mysql_users_table . " WHERE user_id='$user_id'")or die('<span class="error_span"><u>MySQL error:</u> ' . htmlspecialchars(mysql_error()) . '</span>');
-
-		if(mysql_num_rows($query) == 1)
+		$query = ("SELECT * FROM " . global_mysql_users_table . " WHERE user_id='$user_id'");
+        
+        
+    $all = DB::query_all($query);
+ 
+        
+        if(count($all) == 1)
 		{
 			return(true);
 		}
@@ -203,9 +215,9 @@ function create_user($user_name, $user_email, $user_password, $user_secret_code)
 	}
 	else
 	{
-		$query = mysql_query("SELECT * FROM " . global_mysql_users_table . "")or die('<span class="error_span"><u>MySQL error:</u> ' . htmlspecialchars(mysql_error()) . '</span>');
-
-		if(mysql_num_rows($query) == 0)
+		$query = ("SELECT * FROM " . global_mysql_users_table . "");
+           $all = DB::query_all($query);
+           if(count($all) == 1)
 		{
 			$user_is_admin = '1';
 		}
@@ -216,7 +228,7 @@ function create_user($user_name, $user_email, $user_password, $user_secret_code)
 
 		$user_password = encrypt_password($user_password);
 
-		mysql_query("INSERT INTO " . global_mysql_users_table . " (user_is_admin,user_email,user_password,user_name,user_reservation_reminder) VALUES ($user_is_admin,'$user_email','$user_password','$user_name','0')")or die('<span class="error_span"><u>MySQL error:</u> ' . htmlspecialchars(mysql_error()) . '</span>');
+		db::query("INSERT INTO " . global_mysql_users_table . " (user_is_admin,user_email,user_password,user_name,user_reservation_reminder) VALUES ($user_is_admin,'$user_email','$user_password','$user_name','0')");
 
 		$user_password = strip_salt($user_password);
 
@@ -229,9 +241,9 @@ function create_user($user_name, $user_email, $user_password, $user_secret_code)
 
 function list_admin_users()
 {
-	$query = mysql_query("SELECT * FROM " . global_mysql_users_table . " WHERE user_is_admin='1' ORDER BY user_name")or die('<span class="error_span"><u>MySQL error:</u> ' . htmlspecialchars(mysql_error()) . '</span>');
+	$query = mysql_query("SELECT * FROM " . global_mysql_users_table . " WHERE user_is_admin='1' ORDER BY user_name");
 
-	if(mysql_num_rows($query) < 1)
+    if(count($query) > 0)
 	{
 		return('<span class="error_span">There are no admins</span>');
 	}
@@ -241,7 +253,8 @@ function list_admin_users()
 
 		$i = 0;
 
-		while($user = mysql_fetch_array($query))
+    foreach($query as $user)
+
 		{
 			$i++;
 
@@ -265,15 +278,15 @@ function highlight_day($day)
 
 function read_reservation($week, $day, $time)
 {
-	$query = mysql_query("SELECT * FROM " . global_mysql_reservations_table . " WHERE reservation_week='$week' AND reservation_day='$day' AND reservation_time='$time'")or die('<span class="error_span"><u>MySQL error:</u> ' . htmlspecialchars(mysql_error()) . '</span>');
-	$reservation = mysql_fetch_array($query);
+	$query = ("SELECT * FROM " . global_mysql_reservations_table . " WHERE reservation_week='$week' AND reservation_day='$day' AND reservation_time='$time'");
+      $reservation = DB::query_single_row($query);
+    if (!$reservation ) return "";
 	return($reservation['reservation_user_name']);
 }
 
 function read_reservation_details($week, $day, $time)
 {
-	$query = mysql_query("SELECT * FROM " . global_mysql_reservations_table . " WHERE reservation_week='$week' AND reservation_day='$day' AND reservation_time='$time'")or die('<span class="error_span"><u>MySQL error:</u> ' . htmlspecialchars(mysql_error()) . '</span>');
-	$reservation = mysql_fetch_array($query);
+	$reservation = DB::query_single_row("SELECT * FROM " . global_mysql_reservations_table . " WHERE reservation_week='$week' AND reservation_day='$day' AND reservation_time='$time'");
 
 	if(empty($reservation))
 	{
@@ -282,7 +295,7 @@ function read_reservation_details($week, $day, $time)
 	}
 	else
 	{
-		return('<b>Reservation made:</b> ' . $reservation['reservation_made_time'] . '<br><b>User\'s email:</b> ' . $reservation['reservation_user_email']);
+		return('<b>Reservation faite le:</b> ' . $reservation['reservation_made_time'] . '<br><b>Email de l\'utilisateur:</b> ' . $reservation['reservation_user_email']);
 	}
 }
 
@@ -293,13 +306,8 @@ function make_reservation($week, $day, $time)
 	$user_name = $_SESSION['user_name'];
 	$price = global_price;
 
-	if($week == '0' && $day == '0' && $time == '0')
-	{
-		mysql_query("INSERT INTO " . global_mysql_reservations_table . " (reservation_made_time,reservation_week,reservation_day,reservation_time,reservation_price,reservation_user_id,reservation_user_email,reservation_user_name) VALUES (now(),'$week','$day','$time','$price','$user_id','$user_email','$user_name')")or die('<span class="error_span"><u>MySQL error:</u> ' . htmlspecialchars(mysql_error()) . '</span>');
-
-		return(1);
-	}
-	elseif($week < global_week_number && $_SESSION['user_is_admin'] != '1' || $week == global_week_number && $day < global_day_number && $_SESSION['user_is_admin'] != '1')
+    
+    if($week < global_week_number && $_SESSION['user_is_admin'] != '1' || $week == global_week_number && $day < global_day_number && $_SESSION['user_is_admin'] != '1')
 	{
 		return('You can\'t reserve back in time');
 	}
@@ -309,13 +317,23 @@ function make_reservation($week, $day, $time)
 	}
 	else
 	{
-		$query = mysql_query("SELECT * FROM " . global_mysql_reservations_table . " WHERE reservation_week='$week' AND reservation_day='$day' AND reservation_time='$time'")or die('<span class="error_span"><u>MySQL error:</u> ' . htmlspecialchars(mysql_error()) . '</span>');
+		$query = DB::query_all("SELECT * FROM " . global_mysql_reservations_table . " WHERE reservation_week='$week' AND reservation_day='$day' AND reservation_time='$time'");
 
-		if(mysql_num_rows($query) < 1)
+        if(count($query) < 1)
 		{
 			$year = global_year;
+           
+            $week_start = new DateTimeFrench();
+            $week_start->setISODate($year,$week);
+            $week_start->add(new DateInterval("P".($day-1)."D"));
+//            $datefull=$week_start->format('l j F Y');           
+            $datefull=$week_start->format('Y-m-d');         
+                                                      
+//            echo $datefull;
+           
+            
 
-			mysql_query("INSERT INTO " . global_mysql_reservations_table . " (reservation_made_time,reservation_year,reservation_week,reservation_day,reservation_time,reservation_price,reservation_user_id,reservation_user_email,reservation_user_name) VALUES (now(),'$year','$week','$day','$time','$price','$user_id','$user_email','$user_name')")or die('<span class="error_span"><u>MySQL error:</u> ' . htmlspecialchars(mysql_error()) . '</span>');
+			DB::query("INSERT INTO " . global_mysql_reservations_table . " (reservation_made_time,reservation_year,reservation_week,reservation_day,reservation_date,reservation_time,reservation_price,reservation_user_id,reservation_user_email,reservation_user_name) VALUES (datetime('now','localtime'),'$year','$week','$day','$datefull','$time','$price','$user_id','$user_email','$user_name')");
 
 			return(1);
 		}
@@ -338,12 +356,11 @@ function delete_reservation($week, $day, $time)
 	}
 	else
 	{
-		$query = mysql_query("SELECT * FROM " . global_mysql_reservations_table . " WHERE reservation_week='$week' AND reservation_day='$day' AND reservation_time='$time'")or die('<span class="error_span"><u>MySQL error:</u> ' . htmlspecialchars(mysql_error()) . '</span>');
-		$user = mysql_fetch_array($query);
+		$user = DB::query_single_row("SELECT * FROM " . global_mysql_reservations_table . " WHERE reservation_week='$week' AND reservation_day='$day' AND reservation_time='$time'");
 
 		if($user['reservation_user_id'] == $_SESSION['user_id'] || $_SESSION['user_is_admin'] == '1')
 		{
-			mysql_query("DELETE FROM " . global_mysql_reservations_table . " WHERE reservation_week='$week' AND reservation_day='$day' AND reservation_time='$time'")or die('<span class="error_span"><u>MySQL error:</u> ' . htmlspecialchars(mysql_error()) . '</span>');
+			DB::query("DELETE FROM " . global_mysql_reservations_table . " WHERE reservation_week='$week' AND reservation_day='$day' AND reservation_time='$time'");
 
 			return(1);
 		}
@@ -358,13 +375,13 @@ function delete_reservation($week, $day, $time)
 
 function list_users()
 {
-	$query = mysql_query("SELECT * FROM " . global_mysql_users_table . " ORDER BY user_is_admin DESC, user_name")or die('<span class="error_span"><u>MySQL error:</u> ' . htmlspecialchars(mysql_error()) . '</span>');
+	$query = DB::query("SELECT * FROM " . global_mysql_users_table . " ORDER BY user_is_admin DESC, user_name");
 
-	$users = '<table id="users_table"><tr><th>ID</th><th>Admin</th><th>Name</th><th>Email</th><th>Reminders</th><th>Usage</th><th>Cost</th><th></th></tr>';
+	$users = '<table id="users_table"><tr><th>ID</th><th>Admin</th><th>Name</th><th>Email</th><th>Reminders</th><th>Usage</th><th></th></tr>';
 
-	while($user = mysql_fetch_array($query))
+    foreach($query as $user)
 	{
-		$users .= '<tr id="user_tr_' . $user['user_id'] . '"><td><label for="user_radio_' . $user['user_id'] . '">' . $user['user_id'] . '</label></td><td>' . $user['user_is_admin'] . '</td><td><label for="user_radio_' . $user['user_id'] . '">' . $user['user_name'] . '</label></td><td><label for="user_radio_' . $user['user_id'] . '">' . $user['user_email'] . '</label></td><td>' . $user['user_reservation_reminder'] . '</td><td>' . count_reservations($user['user_id']) . '</td><td>' . cost_reservations($user['user_id']) . ' ' . global_currency . '</td><td><input type="radio" name="user_radio" class="user_radio" id="user_radio_' . $user['user_id'] . '" value="' . $user['user_id'] . '"></td></tr>';
+		$users .= '<tr id="user_tr_' . $user['user_id'] . '"><td><label for="user_radio_' . $user['user_id'] . '">' . $user['user_id'] . '</label></td><td>' . $user['user_is_admin'] . '</td><td><label for="user_radio_' . $user['user_id'] . '">' . $user['user_name'] . '</label></td><td><label for="user_radio_' . $user['user_id'] . '">' . $user['user_email'] . '</label></td><td>' . $user['user_reservation_reminder'] . '</td><td>' . count_reservations($user['user_id']) . '</td><td>' . '</td><td><input type="radio" name="user_radio" class="user_radio" id="user_radio_' . $user['user_id'] . '" value="' . $user['user_id'] . '"></td></tr>';
 	}
 
 	$users .= '</table>';
@@ -377,7 +394,7 @@ function reset_user_password($user_id)
 	$password = random_password();
 	$password_encrypted = encrypt_password($password);
 
-	mysql_query("UPDATE " . global_mysql_users_table . " SET user_password='$password_encrypted' WHERE user_id='$user_id'")or die('<span class="error_span"><u>MySQL error:</u> ' . htmlspecialchars(mysql_error()) . '</span>');
+	DB::query("UPDATE " . global_mysql_users_table . " SET user_password='$password_encrypted' WHERE user_id='$user_id'");
 
 	if($user_id == $_SESSION['user_id'])
 	{
@@ -397,7 +414,7 @@ function change_user_permissions($user_id)
 	}
 	else
 	{
-		mysql_query("UPDATE " . global_mysql_users_table . " SET user_is_admin = 1 - user_is_admin WHERE user_id='$user_id'")or die('<span class="error_span"><u>MySQL error:</u> ' . htmlspecialchars(mysql_error()) . '</span>');
+		DB::query("UPDATE " . global_mysql_users_table . " SET user_is_admin = 1 - user_is_admin WHERE user_id='$user_id'");
 
 		return(1);
 	}
@@ -413,12 +430,12 @@ function delete_user_data($user_id, $data)
 	{
 		if($data == 'reservations')
 		{
-			mysql_query("DELETE FROM " . global_mysql_reservations_table . " WHERE reservation_user_id='$user_id'")or die('<span class="error_span"><u>MySQL error:</u> ' . htmlspecialchars(mysql_error()) . '</span>');
+			DB::query("DELETE FROM " . global_mysql_reservations_table . " WHERE reservation_user_id='$user_id'");
 		}
 		elseif($data == 'user')
 		{
-			mysql_query("DELETE FROM " . global_mysql_users_table . " WHERE user_id='$user_id'")or die('<span class="error_span"><u>MySQL error:</u> ' . htmlspecialchars(mysql_error()) . '</span>');
-			mysql_query("DELETE FROM " . global_mysql_reservations_table . " WHERE reservation_user_id='$user_id'")or die('<span class="error_span"><u>MySQL error:</u> ' . htmlspecialchars(mysql_error()) . '</span>');
+			DB::query("DELETE FROM " . global_mysql_users_table . " WHERE user_id='$user_id'");
+			DB::query("DELETE FROM " . global_mysql_reservations_table . " WHERE reservation_user_id='$user_id'");
 		}
 
 		return(1);
@@ -431,17 +448,17 @@ function delete_all($data)
 
 	if($data == 'reservations')
 	{
-		mysql_query("DELETE FROM " . global_mysql_reservations_table . " WHERE reservation_user_id!='$user_id'")or die('<span class="error_span"><u>MySQL error:</u> ' . htmlspecialchars(mysql_error()) . '</span>');
+		DB::query("DELETE FROM " . global_mysql_reservations_table . " WHERE reservation_user_id!='$user_id'");
 	}
 	elseif($data == 'users')
 	{
-		mysql_query("DELETE FROM " . global_mysql_users_table . " WHERE user_id!='$user_id'")or die('<span class="error_span"><u>MySQL error:</u> ' . htmlspecialchars(mysql_error()) . '</span>');
-		mysql_query("DELETE FROM " . global_mysql_reservations_table . " WHERE reservation_user_id!='$user_id'")or die('<span class="error_span"><u>MySQL error:</u> ' . htmlspecialchars(mysql_error()) . '</span>');
+		DB::query("DELETE FROM " . global_mysql_users_table . " WHERE user_id!='$user_id'");
+		DB::query("DELETE FROM " . global_mysql_reservations_table . " WHERE reservation_user_id!='$user_id'");
 	}
 	elseif($data == 'everything')
 	{
-		mysql_query("DELETE FROM " . global_mysql_users_table . "")or die('<span class="error_span"><u>MySQL error:</u> ' . htmlspecialchars(mysql_error()) . '</span>');
-		mysql_query("DELETE FROM " . global_mysql_reservations_table . "")or die('<span class="error_span"><u>MySQL error:</u> ' . htmlspecialchars(mysql_error()) . '</span>');
+		DB::query("DELETE FROM " . global_mysql_users_table . "");
+		DB::query("DELETE FROM " . global_mysql_reservations_table . "");
 	}
 
 	return(1);
@@ -455,7 +472,7 @@ function save_system_configuration($price)
 	}
 	else
 	{
-		mysql_query("UPDATE " . global_mysql_configuration_table . " SET price='$price'")or die('<span class="error_span"><u>MySQL error:</u> ' . htmlspecialchars(mysql_error()) . '</span>');
+		DB::query("UPDATE " . global_mysql_configuration_table . " SET price='$price'");
 	}
 
 	return(1);
@@ -464,25 +481,39 @@ function save_system_configuration($price)
 // User control panel
 
 function get_usage()
-{
-	$usage = '<table id="usage_table"><tr><th>Reservations</th><th>Cost</th><th>Current price per reservation</th></tr><tr><td>' . count_reservations($_SESSION['user_id']) . '</td><td>' . cost_reservations($_SESSION['user_id']) . ' ' . global_currency . '</td><td>' . global_price . ' ' . global_currency . '</td></tr></table>';
-	return($usage);
+{                                                                                                                  
+        $user_id = $_SESSION['user_id'];
+   $query  = DB::query("SELECT * FROM " . global_mysql_reservations_table . " WHERE reservation_user_id='$user_id'");
+//
+    $users = '<table id="usage_table"><tr><th>Reservations</th><th>When</th></tr>';
+
+    foreach($query as $user)
+    {
+        $users .= '<tr><td>' . $user['reservation_date'] . '</label></td><td>' . $user['reservation_time'] . '</td>'.
+        '</tr>';
+    }
+
+    
+    $users .= '</table>';
+
+    return($users);
 }
 
 function count_reservations($user_id)
 {
-	$query = mysql_query("SELECT * FROM " . global_mysql_reservations_table . " WHERE reservation_user_id='$user_id'")or die('<span class="error_span"><u>MySQL error:</u> ' . htmlspecialchars(mysql_error()) . '</span>');
-	$count = mysql_num_rows($query);
+	$count  = DB::query_single_field("SELECT count(*) FROM " . global_mysql_reservations_table . " WHERE reservation_user_id='$user_id'");
+//	$count = mysql_num_rows($query);
 	return($count);
 }
 
 function cost_reservations($user_id)
 {
-	$query = mysql_query("SELECT * FROM " . global_mysql_reservations_table . " WHERE reservation_user_id='$user_id'")or die('<span class="error_span"><u>MySQL error:</u> ' . htmlspecialchars(mysql_error()) . '</span>');
+	$query = DB::query("SELECT * FROM " . global_mysql_reservations_table . " WHERE reservation_user_id='$user_id'");
 
 	$cost = 0;
 
-	while($reservation = mysql_fetch_array($query))
+        foreach($query as $reservation)
+
 	{
 		$cost =+ $cost + $reservation['reservation_price'];	
 	}
@@ -493,8 +524,7 @@ function cost_reservations($user_id)
 function get_reservation_reminders()
 {
 	$user_id = $_SESSION['user_id'];
-	$query = mysql_query("SELECT * FROM " . global_mysql_users_table . " WHERE user_id='$user_id'")or die('<span class="error_span"><u>MySQL error:</u> ' . htmlspecialchars(mysql_error()) . '</span>');
-	$user = mysql_fetch_array($query);
+	$user = DB::query_single_row("SELECT * FROM " . global_mysql_users_table . " WHERE user_id='$user_id'");
 
 	if($user['user_reservation_reminder'] == 1)
 	{
@@ -511,7 +541,7 @@ function get_reservation_reminders()
 function toggle_reservation_reminder()
 {
 	$user_id = $_SESSION['user_id'];
-	mysql_query("UPDATE " . global_mysql_users_table . " SET user_reservation_reminder = 1 - user_reservation_reminder WHERE user_id='$user_id'")or die('<span class="error_span"><u>MySQL error:</u> ' . htmlspecialchars(mysql_error()) . '</span>');
+	DB::query("UPDATE " . global_mysql_users_table . " SET user_reservation_reminder = 1 - user_reservation_reminder WHERE user_id='$user_id'");
 
 	return(1);
 }
@@ -544,16 +574,16 @@ function change_user_details($user_name, $user_email, $user_password)
 	{
 		if(empty($user_password))
 		{
-			mysql_query("UPDATE " . global_mysql_users_table . " SET user_name='$user_name', user_email='$user_email' WHERE user_id='$user_id'")or die('<span class="error_span"><u>MySQL error:</u> ' . htmlspecialchars(mysql_error()) . '</span>');
+			DB::query("UPDATE " . global_mysql_users_table . " SET user_name='$user_name', user_email='$user_email' WHERE user_id='$user_id'");
 		}
 		else
 		{
 			$user_password = encrypt_password($user_password);
 
-			mysql_query("UPDATE " . global_mysql_users_table . " SET user_name='$user_name', user_email='$user_email', user_password='$user_password' WHERE user_id='$user_id'")or die('<span class="error_span"><u>MySQL error:</u> ' . htmlspecialchars(mysql_error()) . '</span>');
+			DB::query("UPDATE " . global_mysql_users_table . " SET user_name='$user_name', user_email='$user_email', user_password='$user_password' WHERE user_id='$user_id'");
 		}
 
-		mysql_query("UPDATE " . global_mysql_reservations_table . " SET reservation_user_name='$user_name', reservation_user_email='$user_email' WHERE reservation_user_id='$user_id'")or die('<span class="error_span"><u>MySQL error:</u> ' . htmlspecialchars(mysql_error()) . '</span>');
+		DB::query("UPDATE " . global_mysql_reservations_table . " SET reservation_user_name='$user_name', reservation_user_email='$user_email' WHERE reservation_user_id='$user_id'");
 
 		$_SESSION['user_name'] = $user_name;
 		$_SESSION['user_email'] = $user_email;
@@ -567,4 +597,3 @@ function change_user_details($user_name, $user_email, $user_password)
 	}
 }
 
-?>

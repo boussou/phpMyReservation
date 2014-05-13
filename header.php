@@ -1,36 +1,15 @@
-<?php include_once('main.php'); ?>
 
-<div id="header_inner_div"><div id="header_inner_left_div">
-
-<a href="#about">About</a>
-
+<div id="header_logout_div">
 <?php
 
 if(isset($_SESSION['logged_in']))
 {
-	echo ' | <a href="#help">Help</a>';
-}
-
-?>
-
-</div><div id="header_inner_center_div">
-
-<?php
-
-if(isset($_SESSION['logged_in']))
-{
-	echo '<b>Week ' . global_week_number . ' - ' . global_day_name . ' ' . date('jS F Y') . '</b>';
-}
-
-?>
-
-</div><div id="header_inner_right_div">
-
-<?php
-
-if(isset($_SESSION['logged_in']))
-{
-	echo '<a href="#cp">Control panel</a> | <a href="#logout">Log out</a>';
+        if($_SESSION['user_is_admin'] == '1')
+    {
+        echo '<a href="#cp">Control panel</a> | ';
+    }
+        
+	echo '<a href="#logout">Se déconnecter</a>';
 }
 else
 {
@@ -38,5 +17,4 @@ else
 }
 
 ?>
-
-</div></div>
+</div>

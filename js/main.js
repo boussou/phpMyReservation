@@ -1,11 +1,11 @@
 // Show pages
-
-function showabout()
-{
-	page_load();
-	div_hide('#content_div');
-	$.get('about.php', function(data) { $('#content_div').html(data); div_fadein('#content_div'); page_loaded('about'); });
-}
+    function id2array(id)
+    {
+        var array = id.split(':');
+        if(array.length>3)
+        array[3]=array.slice(3).join(':');
+        return array;
+    }
 
 function showlogin()
 {
@@ -95,14 +95,31 @@ function showweek(week, option)
 		{
 			var week = 1;
 		}
-
+        if(week>global_week_number+ global_weeks_forward)
+        {
+          notify('Il n\'y a pas de réservation plus loin', 4);
+          return;  
+        }
+        if(week<global_week_number-global_weeks_backward)
+        {
+          notify('Il n\'y a pas de réservation plus avant', 4);
+          return;  
+        } 
+        
 		page_load('week');
 		div_hide('#reservation_table_div');
 
 		$.get('reservation.php?week='+week, function(data)
 		{
 			$('#reservation_table_div').html(data);
-			$('#week_number_span').html(week);
+			
+         //   $('#week_number_span').html(week);
+            
+            $.get('reservation.php?weeknumber='+week, function(data)
+            {
+                     $('#week_number_span').html(data);
+            });
+            
 			div_fadein('#reservation_table_div');
 			page_loaded('week');
 
@@ -142,7 +159,7 @@ function page_load(page)
 	{
 		if($('#content_div').css('opacity') == 0)
 		{
-			notify('Loading...', 300);
+			notify('Chargement...', 300);
 		}
 	}, 500);
 
@@ -153,7 +170,7 @@ function page_load(page)
 		{
 			if($('#reservation_table_div').is(':hidden'))
 			{
-				notify('Loading...', 300);
+				notify('Chargement...', 300);
 			}
 		}, 500);
 	}	
@@ -163,7 +180,7 @@ function page_load(page)
 		{
 			if($('#reservation_table_div').css('opacity') == 0)
 			{
-				notify('Loading...', 300);
+				notify('Chargement...', 300);
 			}
 		}, 500);
 	}
@@ -174,16 +191,17 @@ function page_loaded(page)
 	// All
 	$.get('main.php?day_number', function(data)
 	{
+        if(typeof global_day_number != "undefined")
 		if(data != global_day_number)
 		{
-			notify('Day have changed. Refreshing...', '300');
+			notify('Le jour a changé. Refresh...', '300');
 			setTimeout(function() { window.location.replace('.'); }, 2000);
 		}
 	});
 
 	setTimeout(function()
 	{
-		if($('#notification_inner_cell_div').is(':visible') && $('#notification_inner_cell_div').html() == 'Loading...')
+		if($('#notification_inner_cell_div').is(':visible') && $('#notification_inner_cell_div').html() == 'Chargement...')
 		{
 			notify();
 		}
@@ -192,21 +210,7 @@ function page_loaded(page)
 	read_reservation_details();
 
 	// Individual
-	if(page == 'about')
-	{
-		$('#about_latest_version_p').html('<img src="img/loading.gif" alt="Loading"> Getting latest version...');
 
-		setTimeout(function()
-		{
-			$.get('main.php?latest_version', function(data)
-			{
-				if($('#about_latest_version_p').length)
-				{
-					$('#about_latest_version_p').html(data);
-				}
-			});
-		}, 1000);
-	}
 }
 
 // Login
@@ -216,7 +220,7 @@ function login()
 	var user_email = $('#user_email_input').val();
 	var user_password = $('#user_password_input').val();
 
-	$('#login_message_p').html('<img src="img/loading.gif" alt="Loading"> Logging in...').slideDown('fast');
+	$('#login_message_p').html('<img src="img/loading.gif" alt="Loading"> Connexion...').slideDown('fast');
 
 	var remember_me_checkbox = $('#remember_me_checkbox').prop('checked');
 
@@ -240,7 +244,7 @@ function login()
 		{
 			if(data == '')
 			{
-				$('#login_message_p').html('<span class="error_span">Wrong email and/or password</span>');
+				$('#login_message_p').html('<span class="error_span">Mauvais email et/ou mot de passe</span>');
 				$('#user_email_input').val('');
 				$('#user_password_input').val('');
 				input_focus('#user_email_input');
@@ -255,7 +259,7 @@ function login()
 
 function logout()
 {
-	notify('Logging out...', 300);
+	notify('Deconnexion...', 300);
 	$.get('login.php?logout', function(data) { setTimeout(function() { window.location.replace('.'); }, 1000); });
 }
 
@@ -277,14 +281,14 @@ function create_user()
 
 	if(user_password != user_password_confirm)
 	{
-		$('#new_user_message_p').html('<span class="error_span">Passwords do not match</span>').slideDown('fast');
+		$('#new_user_message_p').html('<span class="error_span">Les mots de passe ne correspondent pas</span>').slideDown('fast');
 		$('#user_password_input').val('');
 		$('#user_password_confirm_input').val('');
 		input_focus('#user_password_input');
 	}
 	else
 	{
-		$('#new_user_message_p').html('<img src="img/loading.gif" alt="Loading"> Creating user...').slideDown('fast');
+		$('#new_user_message_p').html('<img src="img/loading.gif" alt="Loading"> Creation de l\'utilisateur...').slideDown('fast');
 
 		$.post('login.php?create_user', { user_name: user_name, user_email: user_email, user_password: user_password, user_secret_code: user_secret_code }, function(data)
 		{
@@ -294,7 +298,7 @@ function create_user()
 
 				setTimeout(function()
 				{
-					$('#new_user_message_p').html('User created successfully! Logging in... <img src="img/loading.gif" alt="Loading">');
+					$('#new_user_message_p').html('Utilisateur créé! Connexion... <img src="img/loading.gif" alt="Loading">');
 					setTimeout(function() { window.location.replace('#login'); }, 2000);
 				}, 1000);
 			}
@@ -313,6 +317,10 @@ function toggle_reservation_time(id, week, day, time, from)
 {
 	if(session_user_is_admin == '1')
 	{
+        
+        if(typeof global_day_number == "undefined")
+        return;
+        
 		if(week < global_week_number || week == global_week_number && day < global_day_number)
 		{
 			notify('You are reserving back in time. You can do that because you\'re an admin', 4);
@@ -327,7 +335,7 @@ function toggle_reservation_time(id, week, day, time, from)
 
 	if(user_name == '')
 	{
-		$(id).html('Wait...'); 
+		$(id).html('Patientez...'); 
 
 		$.post('reservation.php?make_reservation', { week: week, day: day, time: time }, function(data) 
 		{
@@ -346,9 +354,9 @@ function toggle_reservation_time(id, week, day, time, from)
 	{
 		if(offclick_event == 'mouseup' || from == 'details')
 		{
-			if(user_name == 'Wait...')
+			if(user_name == 'Patientez...')
 			{
-				notify('One click is enough', 4);
+				notify('Un click suffit !', 4);
 			}
 			else if(user_name == session_user_name || session_user_is_admin == '1')
 			{
@@ -363,7 +371,7 @@ function toggle_reservation_time(id, week, day, time, from)
 
 				if(delete_confirm)
 				{
-					$(id).html('Wait...');
+					$(id).html('Patientez...');
 
 					$.post('reservation.php?delete_reservation', { week: week, day: day, time: time }, function(data)
 					{
@@ -381,7 +389,7 @@ function toggle_reservation_time(id, week, day, time, from)
 			}
 			else
 			{
-				notify('You can\'t remove other users\' reservations', 2);
+				notify('Vous ne pouvez pas supprimer les reservations d\autres personnes', 2);
 			}
 
 			if($('#reservation_details_div').is(':visible'))
@@ -399,7 +407,7 @@ function read_reservation(id, week, day, time)
 
 function read_reservation_details(id, week, day, time)
 {
-	if(typeof id != 'undefined' && $(id).html() != '' && $(id).html() != 'Wait...')
+	if(typeof id != 'undefined' && $(id).html() != '' && $(id).html() != 'Patientez...')
 	{
 		if($('#reservation_details_div').is(':hidden'))
 		{
@@ -407,7 +415,7 @@ function read_reservation_details(id, week, day, time)
 			var top = position.top + 50;
 			var left = position.left - 100;
 
-			$('#reservation_details_div').html('Getting details...');
+			$('#reservation_details_div').html('Récupération des details...');
 			$('#reservation_details_div').css('top', top+'px').css('left', left+'px');
 			$('#reservation_details_div').fadeIn('fast');
 
@@ -422,11 +430,11 @@ function read_reservation_details(id, week, day, time)
 				{
 					if(data == 0)
 					{
-						$('#reservation_details_div').html('This reservation no longer exists. Wait...');
+						$('#reservation_details_div').html('Cette reservation n\'existe plus. Patientez...');
 						
 						setTimeout(function()
 						{
-							if($('#reservation_details_div').is(':visible') && $('#reservation_details_div').html() == 'This reservation no longer exists. Wait...')
+							if($('#reservation_details_div').is(':visible') && $('#reservation_details_div').html() == 'Cette reservation n\'existe plus. Patientez....')
 							{
 								read_reservation(reservation_details_id, reservation_details_week, reservation_details_day, reservation_details_time);
 								read_reservation_details();
@@ -441,14 +449,14 @@ function read_reservation_details(id, week, day, time)
 						{
 							if($(reservation_details_id).html() == session_user_name || session_user_is_admin == '1')
 							{
-								var delete_link_html = '<a href="." onclick="toggle_reservation_time(reservation_details_id, reservation_details_week, reservation_details_day, reservation_details_time, \'details\'); return false">Delete</a> | ';
+								var delete_link_html = '<a href="." onclick="toggle_reservation_time(reservation_details_id, reservation_details_week, reservation_details_day, reservation_details_time, \'details\'); return false">Supprimer</a> | ';
 							}
 							else
 							{
 								var delete_link_html = '';
 							}
 
-							$('#reservation_details_div').append('<br><br>'+delete_link_html+'<a href="." onclick="read_reservation_details(); return false">Close this</a>');
+							$('#reservation_details_div').append('<br><br>'+delete_link_html+'<a href="." onclick="read_reservation_details(); return false">Fermer</a>');
 						}
 					}
 				}, 500);
@@ -467,7 +475,7 @@ function list_users()
 {
 	$.get('cp.php?list_users', function(data) { $('#users_div').html(data); });
 }
-
+   
 function reset_user_password()
 {
 	if(typeof $(".user_radio:checked").val() !='undefined')
@@ -612,36 +620,7 @@ function delete_all(delete_data)
 		});
 	}
 }
-
-function save_system_configuration()
-{
-	var price = $('#price_input').val();
-
-	$('#system_configuration_message_p').html('<img src="img/loading.gif" alt="Loading"> Saving...');
-	$('#system_configuration_message_p').slideDown('fast');
-
-	$.post('cp.php?save_system_configuration', { price: price }, function(data)
-	{
-		if(data == 1)
-		{
-			input_focus();
-
-			setTimeout(function()
-			{
-				$('#system_configuration_message_p').slideUp('fast', function()
-				{
-					get_usage();
-				});
-			}, 1000);
-		}
-		else
-		{
-			input_focus('#price_input');
-			$('#system_configuration_message_p').html(data);
-		}
-	});
-}
-
+               
 // User control panel
 
 function get_usage()
@@ -654,35 +633,11 @@ function get_reservation_reminders()
 	$.get('cp.php?get_reservation_reminders', function(data) { $('#reservation_reminders_span').html(data); });
 }
 
-function add_one_reservation()
-{
-	$('#usage_message_p').html('<img src="img/loading.gif" alt="Loading"> Saving...').slideDown('fast');
 
-	$.post('reservation.php?make_reservation', { week: '0', day: '0', time: '0' }, function(data)
-	{
-		if(data == 1)
-		{
-			setTimeout(function()
-			{
-				if($('#users_div').length)
-				{
-					list_users();
-				}
-
-				get_usage();
-				$('#usage_message_p').slideUp('fast');
-			}, 1000);
-		}
-		else
-		{
-			$('#usage_message_p').html(data);
-		}
-	});
-}
 
 function toggle_reservation_reminder()
 {
-	$('#settings_message_p').html('<img src="img/loading.gif" alt="Loading"> Saving...').slideDown('fast');
+	$('#settings_message_p').html('<img src="img/loading.gif" alt="Loading"> Sauvegarde...').slideDown('fast');
 
 	$.post('cp.php?toggle_reservation_reminder', function(data)
 	{
@@ -746,7 +701,8 @@ function div_fadein(id)
 {
 	setTimeout(function()
 	{
-		if(global_css_animations == 1)
+        if(typeof global_css_animations == "undefined")
+//		if(global_css_animations == 1)
 		{
 			$(id).addClass('div_fadein');
 		}
@@ -836,8 +792,8 @@ $(document).ready( function()
 	$(document).on('click', '#delete_all_reservations_button', function() { delete_all('reservations'); });
 	$(document).on('click', '#delete_all_users_button', function() { delete_all('users'); });
 	$(document).on('click', '#delete_everything_button', function() { delete_all('everything'); });
-	$(document).on('click', '#add_one_reservation_button', function() { add_one_reservation(); });
 
+    
 	// Checkboxes
 	$(document).on('click', '#reservation_reminders_checkbox', function() { toggle_reservation_reminder(); });
 
@@ -855,15 +811,24 @@ $(document).ready( function()
 	// Divisions
 	$(document).on('mouseout', '.reservation_time_cell_div', function() { read_reservation_details(); });
 
+    
 	$(document).on('click', '.reservation_time_cell_div', function()
 	{
-		var array = this.id.split(':');
+        
+        var array = id2array(this.id);
+
+//		var array = this.id.split(':');
+//        if(array.length>3)
+//        array[3]=array.slice(3).join(':');
+//        function toggle_reservation_time(id, week, day, time, from)
 		toggle_reservation_time(this, array[1], array[2], array[3], array[0]);
 	});
 
 	$(document).on('mousemove', '.reservation_time_cell_div', function()
 	{
-		var array = this.id.split(':');
+//		var array = this.id.split(':');
+        var array = id2array(this.id);
+        
 		read_reservation_details(this, array[1], array[2], array[3]);
 	});
 
@@ -876,7 +841,9 @@ $(document).ready( function()
 function hash()
 {
 	var hash = window.location.hash.slice(1);
-
+   // $('#debug').text('hash='+hash);
+    
+    
 	if(hash == '')
 	{
 		if(typeof session_logged_in != 'undefined')
@@ -890,11 +857,7 @@ function hash()
 	}
 	else
 	{
-		if(hash == 'about')
-		{
-			showabout();
-		}
-		else if(hash == 'new_user')
+	 if(hash == 'new_user')
 		{
 			shownew_user();
 		}
