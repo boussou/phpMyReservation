@@ -598,7 +598,7 @@ text-decoration: none;
 /* position: absolute; */
 /* right: 10px; */
 float: right;
-
+ margin-right: 5px;
 }
 
 .bigred:hover
