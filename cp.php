@@ -64,7 +64,7 @@ else
 
 ?>
 
-		<h3>User administration</h3>
+		<h3>Gestion des utilisateurs</h3>
 
 		<div id="users_div"><?php echo list_users(); ?></div>
 
@@ -73,9 +73,9 @@ else
 
 		<hr>
 
-		<h3>Database administration</h3>
+		<h3>Administration de base de données</h3>
 
-		<p class="smalltext_p">These will require a confirmation. Your user and reservations will not be deleted unless you delete everything.</p>
+		<p class="smalltext_p">Celles-ci nécessiteront une confirmation. Votre utilisateur et réservations ne seront pas supprimés sauf si vous supprimez tout.</p>
 
 		<p><input type="button" class="small_button" id="delete_all_reservations_button" value="Delete all reservations"> <input type="button" class="small_button" id="delete_all_users_button" value="Delete all users"> <input type="button" class="small_button" id="delete_everything_button" value="Delete everything"></p>
 
@@ -92,9 +92,9 @@ else
 
 ?>
 
-	<h3>Your usage</h3>
+	<h3>votre utilisation</h3>
 
-	<p class="smalltext_p">If you have used without making a reservation first, please click the button below. It can't be undone.</p>
+	<p class="smalltext_p">Si vous avez eu une utilisation sans faire de réservation en premier lieu, cliquez sur le bouton ci-dessous. Cela ne pourra pas être annulé.</p>
 
 	<div id="usage_div"><?php echo get_usage(); ?></div>
 
@@ -110,10 +110,10 @@ else
 
 ?>
 
-	<h3>Your settings</h3>
+	<h3>vos paramètres</h3>
 
-	<p class="smalltext_p">Before changing any setting, please verify that your details below are correct.</p>
-	<p><span id="reservation_reminders_span"><?php echo get_reservation_reminders(); ?></span> <label for="reservation_reminders_checkbox">Send me reservation reminders by email</label></p>
+	<p class="smalltext_p">Avant de modifier un paramètre, veuillez vérifier que vos coordonnées ci-dessous sont correctes.</p>
+	<p><span id="reservation_reminders_span"><?php echo get_reservation_reminders(); ?></span> <label for="reservation_reminders_checkbox">Envoyez-moi un rappel de réservation par email</label></p>
 
 	<p id="settings_message_p"></p>
 
@@ -125,21 +125,21 @@ else
 
 ?>
 
-	<h3>Your details</h3>
+	<h3>vos détails</h3>
 
-	<p class="smalltext_p">If you change your email, you must use the new one to log in. Password can be left blank to leave unchanged.</p>
+	<p class="smalltext_p">Si vous changez votre email, vous devez utiliser le nouveau mot de passe pour vous connecter - laissez le vide pour le laisser inchangé.</p>
 
 	<form action="." id="user_details_form" autocomplete="off"><p>
 
 	<div id="user_details_div"><div>
-	<label for="user_name_input">Name:</label><br>
+	<label for="user_name_input">Nom:</label><br>
 	<input type="text" id="user_name_input" value="<?php echo $_SESSION['user_name']; ?>"><br><br>
 	<label for="user_email_input">Email:</label><br>
 	<input type="text" id="user_email_input" autocapitalize="off" value="<?php echo $_SESSION['user_email']; ?>">
 	</div><div>
-	<label for="user_password_input">Password:</label><br>
+	<label for="user_password_input">Mot de passe:</label><br>
 	<input type="password" id="user_password_input"><br><br>
-	<label for="user_password_confirm_input">Confirm password:</label><br>
+	<label for="user_password_confirm_input">Confirmer le mot de passe:</label><br>
 	<input type="password" id="user_password_confirm_input">
 	</div></div>
 

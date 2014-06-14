@@ -107,8 +107,8 @@ div#preload_div
 div.box_div
 {
 	margin: 0 auto;
-	background-color: #4a8cf6;
-	border: 1px solid #4a8cf6;
+	background-color: #05809F;
+	border: 1px solid #05809F;
 	border-radius: 10px;
 
 }
@@ -212,7 +212,7 @@ div.reservation_time_div
 {
 	display: table;
 	width: 100%;
-	border: 1px solid #4a8cf6;
+	border: 1px solid #05809F;
 	-webkit-tap-highlight-color: rgba(0,0,0,0);
 }
 
@@ -227,6 +227,27 @@ div.reservation_time_cell_div
 	font-size: 12px;
 }
 
+
+div.reservation_time_div_inactive
+{
+    display: table;
+    width: 100%;
+    border: 1px solid #777;
+}
+
+
+div.reservation_time_cell_div_inactive
+{
+    display: table-cell;
+    background-color: #ddd;
+    width: 100%;
+    height: 40px;
+    vertical-align: middle;
+    text-align: center;
+    font-family: arial, "liberation sans";
+    font-size: 12px;
+    cursor: not-allowed;
+}
 div#reservation_details_div
 {
 	display: none;
@@ -275,7 +296,7 @@ span.error_span
 
 span#today_span
 {
-	color: #4a8cf6;
+	color: #05809F;
 	font-weight: bold;
 }
 
@@ -358,6 +379,12 @@ input
 	font-size: 12px;
 }
 
+select
+{
+    width: 200px;
+    padding: 4px;
+}
+
 input[type=text], input[type=password]
 {
 	width: 200px;
@@ -386,7 +413,7 @@ input.small_button
 
 input.blue_button
 {
-	background-color: #4a8cf6;
+	background-color: #05809F;
 }
 
 input#price_input
@@ -422,7 +449,7 @@ h2
 
 h3
 {
-	color: #4a8cf6;
+	color: #05809F;
 	font-size: 14px;
 	font-weight: bold;
 }
@@ -446,7 +473,7 @@ p.bold_p
 
 p.blue_p
 {
-	color: #4a8cf6;
+	color: #05809F;
 }
 
 p#login_message_p
@@ -500,7 +527,7 @@ li
 
 a
 {
-	color: #4a8cf6;
+	color: #05809F;
 }
 
 div.box_top_div a
@@ -532,7 +559,7 @@ hr
 
 hr.blue_hr
 {
-	background-color: #4a8cf6;
+	background-color: #05809F;
 }
 
 hr.thick_hr
@@ -549,4 +576,34 @@ hr.thick_hr
 	-moz-transition: opacity 0.25s ease-in;
 	-o-transition: opacity 0.25s ease-in;
 	-ms-transition: opacity 0.25s ease-in;
+}
+
+.resa_full {
+background-color: #FEE;
+}
+.resa_partial {
+background-color: #FFE;
+}
+
+.bigred
+{
+padding: 8px;
+background-color: #d74937;
+color: #fff;
+border: 0;
+border-radius: 5px;
+-webkit-appearance: none;
+-webkit-tap-highlight-color: rgba(0,0,0,0);
+text-decoration: none;
+/* position: absolute; */
+/* right: 10px; */
+float: right;
+
+}
+
+.bigred:hover
+{
+padding: 8px;
+background-color: #932E21;
+
 }
