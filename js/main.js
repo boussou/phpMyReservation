@@ -447,7 +447,9 @@ function read_reservation(id, week, day, time)
 
 function read_reservation_details(id, week, day, time)
 {
-	if(typeof id != 'undefined' && $(id).html() != '' && $(id).html() != 'Patientez...')
+	if(typeof id != 'undefined' && $(id).html() != ''
+    && $(id).html() != cell_default_text
+     && $(id).html() != 'Patientez...')
 	{
 		if($('#reservation_details_div').is(':hidden'))
 		{

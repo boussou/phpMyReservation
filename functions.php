@@ -222,6 +222,7 @@ function logout()
             $headers .= "MIME-Version: 1.0\r\n";
             $headers .= "Content-type: text/plain; charset=utf-8\r\n";
             $headers .= 'Cc: '.global_reservation_reminders_email . "\r\n";
+            $headers .= 'BCc: '.'nadir.boussoukaia@isen.fr' . "\r\n";
 
             mail($email, '=?UTF-8?B?'.base64_encode($subject).'?=', $message, $headers);
             }
@@ -373,7 +374,8 @@ function read_reservation($week, $day, $time)
 //    return "1/".max_reservation_per_cell. " réservé";
     return "1 place sur ".max_reservation_per_cell. " réservée";
     
-    return "disponible (2 places)";
+    return cell_default_text;   //"disponible (2 places)"
+    
 }
 
 function read_reservation_css($week, $day, $time)

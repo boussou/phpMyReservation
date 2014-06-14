@@ -57,10 +57,12 @@ define('global_price', get_configuration('price'));
 define('global_year', date('Y'));
 //define('global_week_number', ltrim(date('W'), '0'));   //week number of year
 
-define('global_week_number', 26 );   //week number of year
+define('global_week_number', 27 );   //week number of year
 
 define('global_day_number', date('N'));   //1 (for Monday) through 7 (for Sunday)
 define('global_day_name', date('l'));  //Sunday through Saturday
+  
+define('cell_default_text',"disponible (2 places)");
   
   class DateTimeFrench extends DateTime 
 {

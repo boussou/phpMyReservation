@@ -35,7 +35,7 @@ define('global_reservation_reminders', '1');
 
 // Reservation reminders are sent from this email
 // Should be an email address that you own, and that is handled by your web host provider
-define('global_reservation_reminders_email', 'nadir.boussoukaia@isen.fr');
+define('global_reservation_reminders_email', 'veronique.casiez@isen.fr');
 
 // Code to run the reservation reminders script over HTTP
 // If reservation reminders are enabled, this MUST be changed. Check out the wiki for more information
@@ -49,12 +49,12 @@ define('global_url', 'http://your.server/phpmyreservation/');
 define('global_currency', '€');
 
 // How many weeks forward in time to allow reservations
-define('global_weeks_forward', '1');
+define('global_weeks_forward', 0);
 define('global_weeks_backward', 0);
 
+define('min_date','2014/06/30');
+define('max_date','2014/07/05');
 
-define('max_date','2014/07/01');
-define('min_date','2014/06/25');
 define('max_reservation_per_user',1);
 define('max_reservation_per_cell',2);
 

@@ -27,6 +27,9 @@ echo 'var global_year = ' . global_year . ';'."\n";
 echo 'var global_week_number = ' . global_week_number . ';'."\n";
 echo 'var global_day_number = ' . global_day_number . ';'."\n";
 
+echo 'var cell_default_text = "' . cell_default_text . '";'."\n";
+
+
 // Login
 
 if(isset($_SESSION['logged_in']))

@@ -182,14 +182,27 @@ else
     //    $asint=$week_start->getTimestamp();
     //               
 
+$next= $previous='';
 
-    echo '</div><div class="box_div" id="reservation_div"><div class="box_top_div" id="reservation_top_div"><div id="reservation_top_left_div"><a href="." id="previous_week_a">&lt; Semaine précédente</a></div>
-    <div id="reservation_top_center_div">Semaine  <span id="week_number_span">' . global_week_number ." -  $wk".
-    (isset($_SESSION['logged_in'])?'<a href="#logout" class="bigred">Se déconnecter et recevoir le mail de confirmation</a>':'')
+if(global_weeks_forward> 0)
+$next= '<div id="reservation_top_right_div"><a href="." id="next_week_a">Semaine suivante &gt;</a></div>';
 
-    .'</span></div>
+if(global_weeks_backward> 0)
+$previous= '<div id="reservation_top_left_div"><a href="." id="previous_week_a">&lt; Semaine précédente</a></div>';
+                                    
+                                    
+    echo '</div><div class="box_div" id="reservation_div"><div class="box_top_div" id="reservation_top_div">'
+    .$previous
+    //<div id="reservation_top_left_div"><a href="." id="previous_week_a">&lt; Semaine précédente</a></div>
+    .'<div id="reservation_top_center_div">Semaine  <span id="week_number_span">' . global_week_number ." -  $wk".
+    (isset($_SESSION['logged_in'])?'<a href="#logout" class="bigred button">Se déconnecter et recevoir le mail de confirmation</a>':'')
 
-    <div id="reservation_top_right_div"><a href="." id="next_week_a">Semaine suivante &gt;</a></div></div>
+    .'</span></div>   '
+    .$next
+
+    //<div id="reservation_top_right_div"><a href="." id="next_week_a">Semaine suivante &gt;</a></div>
+    .'
+    </div>
     <div class="box_body_div"><div id="reservation_table_div"></div></div></div><div id="reservation_details_div">';
 }
 
