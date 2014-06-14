@@ -182,80 +182,24 @@ function check_login()
 
 function logout()
 {
-         $user_id = $_SESSION['user_id'];
-
-        if($user_id)
-        {
-
-            $query  = DB::query("SELECT * FROM " . global_mysql_reservations_table . " WHERE reservation_user_id='$user_id'");
-            //
-            $users = "";
-//            $users = "Reservations:\n";
-            $email="";
-            foreach($query as $user)
-            {
-//            $users .= 'Le ' . $user['reservation_date'] . ' à ' . $user['reservation_time'] . "\n";
-            $users .=  $user['reservation_date'] . ' à ' . $user['reservation_time'] . "\n";
-            $email=$user['reservation_user_email'];
-            }
-            if(!empty($users))
-            {
-                                        
-            $time = $user['reservation_made_time'] ;
-            $time = '';
-          
-            $subject = 'Confirmation Jury ISEN-Toulon';
-            $message = "Ceci est une confirmation de réservation pour votre entretien de recrutement qui aura lieu à l'ISEN-Toulon à la maison des technologies (Adresse:  Place Georges Pompidou, 83000 Toulon)\r\n\nVotre entretien aura bien lieu le " 
-            //global_title. ' '.  global_organization .'\r\n\n'
-            . $time . "\r\n\n$users\r\n\n"
-            .' Merci de vous présenter à 8h30 ou 13h30 (selon votre demi journée de jury) pour une présentation de l\'école et de ses programmes.\nN\'oubliez pas de vous munir de votre carte d\'identité.'. "\r\n\n"
-            .'Pour votre information quelques chiffres sur l\'ISEN Toulon: https://www.facebook.com/ISEN.Toulon/photos/a.232708453464172.53543.201213143280370/660728240662189/?type=1&theater'
-            . "\r\n\n"
-            .'Bien cordialement.' 
-            . "\r\n\n"
-            . "Cellule admission ISEN-Toulon."
-            . "\r\n\n"
-            . "Pour plus d'information: Veronique Casiez : 04 94 03 89 59 - veronique.casiez@isen.fr";
-            
-
-            $headers = "From: " . global_organization . " <" . global_reservation_reminders_email . ">\r\n";
-            $headers .= "MIME-Version: 1.0\r\n";
-            $headers .= "Content-type: text/plain; charset=utf-8\r\n";
-            $headers .= 'Cc: '.global_reservation_reminders_email . "\r\n";
-
-            mail($email, '=?UTF-8?B?'.base64_encode($subject).'?=', $message, $headers);
-            }
-        }
-
-    
 	session_unset();
 	setcookie(global_cookie_prefix . '_user_email', '', time() - 3600);
 	setcookie(global_cookie_prefix . '_user_password', '', time() - 3600);
 }
 
-
-function validerNumero($telATester) {
-    //Retourne le numéro s'il est valide, sinon false.
-    return preg_match('`^0[1-9]([-. ]?[0-9]{2}){4}$`', $telATester) ? $telATester : false;
-}
-
-function create_user($user_name, $user_email, $user_password, $user_secret_code,
-            $user_tel,
-  $user_serie ,
-  $user_numero 
-)
+function create_user($user_name, $user_email, $user_password, $user_secret_code)
 {
 	if(validate_user_name($user_name) != true)
 	{
-		return('<span class="error_span">Le nom doit être <u>composé de lettres uniquement </u> et être longues <u> de 2 à 12 lettres </ u>. Si votre nom est plus long, utilisez une forme  abrégée</span>');
+		return('<span class="error_span">Name must be <u>letters only</u> and be <u>2 to 12 letters long</u>. If your name is longer, use a short version of your name</span>');
 	}
 	elseif(validate_user_email($user_email) != true)
 	{
-		return('<span class="error_span">L\'E-mail doit être une adresse e-mail valide et pas plus de 50 caractères</span>');
+		return('<span class="error_span">Email must be a valid email address and be no more than 50 characters long</span>');
 	}
 	elseif(validate_user_password($user_password) != true)
 	{
-		return('<span class="error_span">Le mot de passe doit comporter au moins 4 caractères</span>');
+		return('<span class="error_span">Password must be at least 4 characters</span>');
 	}
 	elseif(global_secret_code != '0' && $user_secret_code != global_secret_code)
 	{
@@ -263,29 +207,12 @@ function create_user($user_name, $user_email, $user_password, $user_secret_code,
 	}
 	elseif(user_name_exists($user_name) == true)
 	{
-		return('<span class="error_span">Ce nom est déjà utilisé. Si vous avez le même nom que quelqu\'un d\'autre, utilisez une autre orthographe qui vous identifie tout de même</span>');
+		return('<span class="error_span">Name is already in use. If you have the same name as someone else, use another spelling that identifies you</span>');
 	}
 	elseif(user_email_exists($user_email) == true)
 	{
-		return('<span class="error_span">Cet mail est déjà enregistré. <a href="#forgot_password">Avez vous oublié votre mot de passe? </a></span>');
+		return('<span class="error_span">Email is already registered. <a href="#forgot_password">Forgot your password?</a></span>');
 	}
-    elseif(empty($user_tel))
-    {
-        return('<span class="error_span">Il manque le téléphone!</span>');
-    }  
-    elseif(empty($user_serie))
-    {
-        return('<span class="error_span">Il manque la série!</span>');
-    }    
-    elseif(empty($user_numero))
-    {
-        return('<span class="error_span">Il manque le numéro de candidat!</span>');
-    }          
-    
-        elseif(!validerNumero($user_tel))
-    {
-        return('<span class="error_span">le numéro de téléphone n\'est pas au bon format (tiret, point ou espace comme séparateur)</span>');
-    }          
 	else
 	{
 		$query = ("SELECT * FROM " . global_mysql_users_table . "");
@@ -301,7 +228,7 @@ function create_user($user_name, $user_email, $user_password, $user_secret_code,
 
 		$user_password = encrypt_password($user_password);
 
-		db::query("INSERT INTO " . global_mysql_users_table . " (user_is_admin,user_email,user_password,user_name,user_reservation_reminder,tel,serie,numero) VALUES ($user_is_admin,'$user_email','$user_password','$user_name','0','$user_tel','$user_serie','$user_numero')");
+		db::query("INSERT INTO " . global_mysql_users_table . " (user_is_admin,user_email,user_password,user_name,user_reservation_reminder) VALUES ($user_is_admin,'$user_email','$user_password','$user_name','0')");
 
 		$user_password = strip_salt($user_password);
 
@@ -314,15 +241,15 @@ function create_user($user_name, $user_email, $user_password, $user_secret_code,
 
 function list_admin_users()
 {
-	$query = DB::query("SELECT * FROM " . global_mysql_users_table . " WHERE user_is_admin='1' ORDER BY user_name");
+	$query = mysql_query("SELECT * FROM " . global_mysql_users_table . " WHERE user_is_admin='1' ORDER BY user_name");
 
-    if(count($query) == 0)
+    if(count($query) > 0)
 	{
-		return('<span class="error_span">Il n`\'y a pas d\'admin</span>');
+		return('<span class="error_span">There are no admins</span>');
 	}
 	else
 	{
-		$return = '<table id="forgot_password_table"><tr><th>Nom</th><th>Email</th></tr>';
+		$return = '<table id="forgot_password_table"><tr><th>Name</th><th>Email</th></tr>';
 
 		$i = 0;
 
@@ -351,121 +278,48 @@ function highlight_day($day)
 
 function read_reservation($week, $day, $time)
 {
-    $user_id = $_SESSION['user_id'];
-    $query = ("SELECT * FROM " . global_mysql_reservations_table . " WHERE reservation_week='$week' AND reservation_day='$day' AND reservation_time='$time'");
-    $reservation = DB::query_all($query);
-
-        $resa4user = DB::query_single_row("SELECT * FROM " . global_mysql_reservations_table . " WHERE reservation_week='$week' AND reservation_day='$day' AND reservation_time='$time'
-        AND reservation_user_id=$user_id
-        ");
-        
-    if(!empty($resa4user))
-    return($resa4user['reservation_user_name']);
-    
-    if (count($reservation)==max_reservation_per_cell) return "Plus disponibles";    
-    
-   ///  echo $user_id; print_r($reservation);
-  
-    if (count($reservation)==1) 
-//    if($reservation[0]['reservation_user_id']==$user_id)
-//    return($reservation[0]['reservation_user_name']);
-//    else
-//    return "1/".max_reservation_per_cell. " réservé";
-    return "1 place sur ".max_reservation_per_cell. " réservée";
-    
-    return "disponible (2 places)";
-}
-
-function read_reservation_css($week, $day, $time)
-{
-    $user_id = $_SESSION['user_id'];
 	$query = ("SELECT * FROM " . global_mysql_reservations_table . " WHERE reservation_week='$week' AND reservation_day='$day' AND reservation_time='$time'");
-    $reservation = DB::query_all($query);
-    
-    if (count($reservation)==max_reservation_per_cell) return "resa_full";    
-    
-   ///  echo $user_id; print_r($reservation);
-  
-    if (count($reservation)>0) 
-    return "resa_partial";
-
-    return "";
+      $reservation = DB::query_single_row($query);
+    if (!$reservation ) return "";
+	return($reservation['reservation_user_name']);
 }
 
 function read_reservation_details($week, $day, $time)
 {
-	$reservations = DB::query_all("SELECT * FROM " . global_mysql_reservations_table . " WHERE reservation_week='$week' AND reservation_day='$day' AND reservation_time='$time'");
+	$reservation = DB::query_single_row("SELECT * FROM " . global_mysql_reservations_table . " WHERE reservation_week='$week' AND reservation_day='$day' AND reservation_time='$time'");
 
-	if(empty($reservations))
+	if(empty($reservation))
 	{
-		return(0);		
+		return(0);
+		
 	}
 	else
 	{
-        $s="";
-        $i=1;
-        foreach($reservations as $reservation)
-        if($_SESSION['user_is_admin'])
-        $s.=($i>1?"<br>":"").($i++.' <b>Reservation faite le:</b> ' . $reservation['reservation_made_time'] . '<br><b>Email de l\'utilisateur:</b> ' . $reservation['reservation_user_email']."<br>");
-        else
-		$s.=($i++.' <b>Reservation faite le:</b> ' . $reservation['reservation_made_time'] . "<br>");
-                
-        return $s;
+		return('<b>Reservation faite le:</b> ' . $reservation['reservation_made_time'] . '<br><b>Email de l\'utilisateur:</b> ' . $reservation['reservation_user_email']);
 	}
 }
 
-function toggle_reservation($week, $day, $time,$userid)
-{
-
-    //make ou delete?
-    $user_id = $_SESSION['user_id'];
-    $user_email = $_SESSION['user_email'];
-    $user_name = $_SESSION['user_name'];
-    $price = global_price;
-
-        
-        $query = DB::query_single_row("SELECT * FROM " . global_mysql_reservations_table . " WHERE reservation_week='$week' AND reservation_day='$day' AND reservation_time='$time'
-        AND reservation_user_id=$user_id
-        ");
-   if(empty($query))
-return make_reservation($week, $day, $time,$user_id);
-else
-return delete_reservation($week, $day, $time,$user_id);
-
-}
-
-
 function make_reservation($week, $day, $time)
 {
-
 	$user_id = $_SESSION['user_id'];
 	$user_email = $_SESSION['user_email'];
 	$user_name = $_SESSION['user_name'];
 	$price = global_price;
 
-    define('this_week_number', ltrim(date('W'), '0'));   //week number of year
     
-    if($week < this_week_number && $_SESSION['user_is_admin'] != '1' || $week == this_week_number && $day < global_day_number && $_SESSION['user_is_admin'] != '1')
+    if($week < global_week_number && $_SESSION['user_is_admin'] != '1' || $week == global_week_number && $day < global_day_number && $_SESSION['user_is_admin'] != '1')
 	{
-		return("Vous ne pouvez réserver dans le passé");
+		return('You can\'t reserve back in time');
 	}
 	elseif($week > global_week_number + global_weeks_forward && $_SESSION['user_is_admin'] != '1')
 	{
-		return('Vous ne pouvez réserver ' . global_weeks_forward . ' semaine en avant');
+		return('You can only reserve ' . global_weeks_forward . ' weeks forward in time');
 	}
 	else
 	{
-        $nb_resa=count_reservations($user_id);
-        if($nb_resa>=max_reservation_per_user)
-        {
-            $resa=get_first_reservation($user_id) ;
-             $resa=$resa['reservation_date'].' à '.$resa['reservation_time'];
-             return "Vous avez déja une autre réservation le $resa. Veuillez l'annuler d'abord";
-        }
-               
 		$query = DB::query_all("SELECT * FROM " . global_mysql_reservations_table . " WHERE reservation_week='$week' AND reservation_day='$day' AND reservation_time='$time'");
 
-        if(count($query) < max_reservation_per_cell)
+        if(count($query) < 1)
 		{
 			$year = global_year;
            
@@ -485,41 +339,34 @@ function make_reservation($week, $day, $time)
 		}
 		else
 		{
-			return("Quelqu'un d'autre vient juste de réserver ce créneau horaire");
+			return('Someone else just reserved this time');
 		}
 	}
 }
 
-function delete_reservation($week, $day, $time,$user_id)
+function delete_reservation($week, $day, $time)
 {
-
-//	if($week < global_week_number && $_SESSION['user_is_admin'] != '1' || $week == global_week_number && $day < global_day_number && $_SESSION['user_is_admin'] != '1')
-//	{
-//                return("Vous ne pouvez réserver dans le passé" );
-//
-//	}
-//	else
-    if($week > global_week_number + global_weeks_forward && $_SESSION['user_is_admin'] != '1')
+	if($week < global_week_number && $_SESSION['user_is_admin'] != '1' || $week == global_week_number && $day < global_day_number && $_SESSION['user_is_admin'] != '1')
 	{
-        return('Vous ne pouvez réserver ' . global_weeks_forward . ' semaine en avant');
+		return('You can\'t reserve back in time');
+	}
+	elseif($week > global_week_number + global_weeks_forward && $_SESSION['user_is_admin'] != '1')
+	{
+		return('You can only reserve ' . global_weeks_forward . ' weeks forward in time');
 	}
 	else
 	{
-		$user = DB::query_single_row("SELECT * FROM " . global_mysql_reservations_table . " WHERE reservation_week='$week' AND reservation_day='$day' AND reservation_time='$time'
-                            AND reservation_user_id=$user_id
-        ");
+		$user = DB::query_single_row("SELECT * FROM " . global_mysql_reservations_table . " WHERE reservation_week='$week' AND reservation_day='$day' AND reservation_time='$time'");
 
 		if($user['reservation_user_id'] == $_SESSION['user_id'] || $_SESSION['user_is_admin'] == '1')
 		{
-			DB::query("DELETE FROM " . global_mysql_reservations_table . " WHERE reservation_week='$week' AND reservation_day='$day' AND reservation_time='$time'
-                    AND reservation_user_id=$user_id
-                    ");
+			DB::query("DELETE FROM " . global_mysql_reservations_table . " WHERE reservation_week='$week' AND reservation_day='$day' AND reservation_time='$time'");
 
 			return(1);
 		}
 		else
 		{
-			return('Vous ne pouvez pas supprimer la reservation de quelqu\'un d\'autre');
+			return('You can\'t remove other users\' reservations');
 		}
 	}
 }
@@ -635,7 +482,7 @@ function save_system_configuration($price)
 
 function get_usage()
 {                                                                                                                  
-    $user_id = $_SESSION['user_id'];
+        $user_id = $_SESSION['user_id'];
    $query  = DB::query("SELECT * FROM " . global_mysql_reservations_table . " WHERE reservation_user_id='$user_id'");
 //
     $users = '<table id="usage_table"><tr><th>Reservations</th><th>When</th></tr>';
@@ -657,15 +504,6 @@ function count_reservations($user_id)
 	$count  = DB::query_single_field("SELECT count(*) FROM " . global_mysql_reservations_table . " WHERE reservation_user_id='$user_id'");
 //	$count = mysql_num_rows($query);
 	return($count);
-}
-
-function get_first_reservation($user_id)
-{
-    $query = DB::query_single_row("SELECT * FROM " . global_mysql_reservations_table . " WHERE reservation_user_id='$user_id' LIMIT 1");
-
-    return $query;
-    
-    
 }
 
 function cost_reservations($user_id)

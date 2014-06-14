@@ -9,11 +9,11 @@ if(isset($_SESSION['logged_in']))
         echo '<a href="#cp">Control panel</a> | ';
     }
         
-//	echo '<a href="#logout">Se déconnecter et recevoir un mail de confirmation</a>';
+	echo '<a href="#logout">Se déconnecter</a>';
 }
 else
 {
-//	echo 'Non connecté';
+	echo 'Not logged in';
 }
 
 ?>

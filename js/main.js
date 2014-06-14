@@ -270,11 +270,6 @@ function create_user()
 	var user_password = $('#user_password_input').val();
 	var user_password_confirm = $('#user_password_confirm_input').val();
 
-  var user_tel = $('#user_tel_input').val();
-  var user_serie = $('#user_serie_input').val();
-  var user_numero = $('#user_numero_input').val();
-    
-    
 	if($('#user_secret_code_input').length)
 	{
 		var user_secret_code =  $('#user_secret_code_input').val();
@@ -295,14 +290,7 @@ function create_user()
 	{
 		$('#new_user_message_p').html('<img src="img/loading.gif" alt="Loading"> Creation de l\'utilisateur...').slideDown('fast');
 
-		$.post('login.php?create_user', { user_name: user_name, user_email: user_email, user_password: user_password, user_secret_code: user_secret_code,
-            user_tel : user_tel ,
-  user_serie : user_serie,
-  user_numero : user_numero,
-  
-    
- 
-        }, function(data)
+		$.post('login.php?create_user', { user_name: user_name, user_email: user_email, user_password: user_password, user_secret_code: user_secret_code }, function(data)
 		{
 			if(data == 1)
 			{
@@ -343,26 +331,7 @@ function toggle_reservation_time(id, week, day, time, from)
 		}
 	}
 
-    
-        $(id).html('Patientez...'); 
-
-        $.post('reservation.php?toggle_reservation', { week: week, day: day, time: time, user_id:session_user_id }, function(data) 
-        {
-            if(data == 1)
-            {
-                setTimeout(function() { read_reservation(id, week, day, time); }, 1000);
-            }
-            else
-            {
-                notify(data, 4);
-                setTimeout(function() { read_reservation(id, week, day, time); }, 2000);            
-            }
-        });
-    return;
-    /*
-    var user_name = $(id).html();
-	var hasResa = $(id).hasClass('resa_full')|$(id).hasClass('resa_partial');
-    
+	var user_name = $(id).html();
 
 	if(user_name == '')
 	{
@@ -390,7 +359,7 @@ function toggle_reservation_time(id, week, day, time, from)
 				notify('Un click suffit !', 4);
 			}
 			else if(user_name == session_user_name || session_user_is_admin == '1')
-		{
+			{
 				if(user_name != session_user_name && session_user_is_admin == '1')
 				{
 					var delete_confirm = confirm('This is not your reservation, but because you\'re an admin you can remove other users\' reservations. Are you sure you want to do this?');
@@ -420,7 +389,7 @@ function toggle_reservation_time(id, week, day, time, from)
 			}
 			else
 			{
-				notify('Vous ne pouvez pas supprimer les reservations d\'autres personnes', 2);
+				notify('Vous ne pouvez pas supprimer les reservations d\autres personnes', 2);
 			}
 
 			if($('#reservation_details_div').is(':visible'))
@@ -429,20 +398,11 @@ function toggle_reservation_time(id, week, day, time, from)
 			}
 		}
 	}
-    */
 }
 
 function read_reservation(id, week, day, time)
 {
-    $.post('reservation.php?read_reservation', { week: week, day: day, time: time }, function(data) { $(id).html(data); });
-	$.post('reservation.php?read_reservation_css', { week: week, day: day, time: time }, function(data) { 
-        
-        $(id).removeClass('resa_full');
-        $(id).removeClass('resa_partial');
-        $(id).addClass(data); 
-        
-    });
-
+	$.post('reservation.php?read_reservation', { week: week, day: day, time: time }, function(data) { $(id).html(data); });
 }
 
 function read_reservation_details(id, week, day, time)

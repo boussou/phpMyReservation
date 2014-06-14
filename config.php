@@ -35,7 +35,7 @@ define('global_reservation_reminders', '1');
 
 // Reservation reminders are sent from this email
 // Should be an email address that you own, and that is handled by your web host provider
-define('global_reservation_reminders_email', 'nadir.boussoukaia@isen.fr');
+define('global_reservation_reminders_email', 'some@email.address');
 
 // Code to run the reservation reminders script over HTTP
 // If reservation reminders are enabled, this MUST be changed. Check out the wiki for more information
@@ -52,28 +52,17 @@ define('global_currency', '€');
 define('global_weeks_forward', '1');
 define('global_weeks_backward', 0);
 
-
-define('max_date','2014/07/01');
-define('min_date','2014/06/25');
-define('max_reservation_per_user',1);
-define('max_reservation_per_cell',2);
-
-
-
 // Possible reservation times. Use the same syntax as below (TimeFrom-TimeTo)
 $global_times = array('09-10', '10-11', '11-12', '12-13', '13-14', '14-15', '15-16', '16-17', '17-18', '18-19', '19-20', '20-21');
 $global_times = array('09-12', '12-14', '14-18', '19-23');
 
 $from=9;
-$to=17;
-$granularite=2; // x par heure
-$shift=1;  // a value between 0 and $granularite
-
+$to=18;
+$granularite=2;
 
 $global_times = array();
 for($i=$from;$i<$to;$i++)
 {
-if ($i>=12 &&$i<14) continue;
 for($j=0;$j<$granularite;$j++)
 {
     $intervalles=60/$granularite*$j;
@@ -82,29 +71,6 @@ for($j=0;$j<$granularite;$j++)
     $global_times[]="$low:$intervalles";
     
 }
-}
-//--------------------------------------------------
-$global_times = array();
-$grey_hours=array(12,12.5,13,13.5);
-$grey_hours=array(12*$granularite);
-$grey_keyword="Pause";
-for($i=$from*$granularite+$shift;$i<$to*$granularite;$i++)
-{
- if(  in_array($i,$grey_hours) )
-  {  $global_times[]=$grey_keyword; continue; }
-   
-if ($i>=12*$granularite && $i<14*$granularite) continue;
-  
-//    $global_times[]="$intervalles";
 
-    $intervalles=(60/$granularite)*$i;
-    $intervalles=$i/$granularite;
-    $low=str_pad((int)($i/$granularite),2,'0',STR_PAD_LEFT) ;
-    $intervalles=str_pad(($i%$granularite)*60/$granularite,2,'0',STR_PAD_LEFT) ;
-    $global_times[]="$low:$intervalles";
-
-//    $global_times[]="$intervalles";
-    
 
 }
-
